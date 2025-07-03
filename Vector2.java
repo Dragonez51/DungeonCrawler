@@ -12,4 +12,7 @@ public class Vector2 {
         this.y = 0;
     }
 
+    public String toString(){
+        return "Vector2[x: "+x+", y: "+y+"]";
+    }
 }

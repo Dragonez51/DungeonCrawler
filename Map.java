@@ -6,6 +6,8 @@ public class Map {
 
     private boolean hit = false;
 
+    private float maxX, minX, maxY, minY;
+
     public Map() { root = null; }
 
     public void addStartingRooms(MapRoom firstRoom, MapRoom secondRoom)
@@ -141,6 +143,15 @@ public class Map {
 
     }
 
+
+    /*
+        This function compares position recurently.
+        Definitions:
+        node -> current room that is being checked with position;
+        position -> new room potential position;
+
+        The function checkes if there is any position in a circle radius.
+     */
     private MapRoom comparePositionsRec(MapRoom node, Vector2 position, float offset)
     {
         if (node == null) { return null; }
@@ -150,12 +161,25 @@ public class Map {
         comparePositionsRec(node.getRight(), position, offset);
 
         Vector2 temp = node.getPosition();
-        if ((position.x >= temp.x - offset && position.x <= temp.x + offset)
-                &&
-                (position.y >= temp.y - offset && position.y <= temp.y + offset))
-        {
-            hit = true;
-            return null;
+        if(temp.x == position.x){
+            if(temp.y == position.y){
+                hit = true;
+            }
+            if(Math.abs(temp.y - position.y) < offset) {
+                hit = true;
+            }
+        }else if(temp.y == position.y){
+            if(temp.x == position.x){
+                hit = true;
+            }
+            if(Math.abs(temp.x - position.x) < offset) {
+                hit = true;
+            }
+        }else{
+            double c = Math.sqrt(Math.pow(Math.abs(temp.x - position.x), 2) + Math.pow(Math.abs(temp.y - position.y), 2));
+            if(c < offset){
+                hit = true;
+            }
         }
 
         return null;
@@ -174,6 +198,102 @@ public class Map {
         {
             return false;
         }
+    }
+
+    public void moveAllX(float offset){
+        moveAllX(root, offset);
+    }
+    private void moveAllX(MapRoom node, float offset){
+        if(node == null){
+            return;
+        }
+
+        node.setPosition(new Vector2(node.getPosition().x+offset, node.getPosition().y));
+        moveAllX(node.getLeft(), offset);
+        moveAllX(node.getFront(), offset);
+        moveAllX(node.getRight(), offset);
+    }
+
+    public void moveAllY(float offset){
+        moveAllY(root, offset);
+    }
+    private void moveAllY(MapRoom node, float offset){
+        if(node == null){
+            return;
+        }
+
+        node.setPosition(new Vector2(node.getPosition().x, node.getPosition().y+offset));
+        moveAllY(node.getLeft(), offset);
+        moveAllY(node.getFront(), offset);
+        moveAllY(node.getRight(), offset);
+    }
+
+    public float getMaxX(){
+        return getMaxX(root);
+    }
+    private float getMaxX(MapRoom node){
+        if(node == null){ return maxX; }
+
+        if(node.getPosition().x > maxX){
+            maxX = node.getPosition().x;
+        }
+
+        getMaxX(node.getLeft());
+        getMaxX(node.getFront());
+        getMaxX(node.getRight());
+
+        return maxX;
+    }
+
+    public float getMinX(){
+        return getMinX(root);
+    }
+    private float getMinX(MapRoom node){
+        if(node == null){ return minX; }
+
+        if(node.getPosition().x < minX){
+            minX = node.getPosition().x;
+        }
+
+        getMinX(node.getLeft());
+        getMinX(node.getFront());
+        getMinX(node.getRight());
+
+        return minX;
+    }
+
+    public float getMaxY(){
+        return getMaxY(root);
+    }
+    private float getMaxY(MapRoom node){
+        if(node == null){ return maxY; }
+
+        if(node.getPosition().y > maxY){
+            maxY = node.getPosition().y;
+        }
+
+        getMaxY(node.getLeft());
+        getMaxY(node.getFront());
+        getMaxY(node.getRight());
+
+        return maxY;
+    }
+
+    public float getMinY(){
+        return getMinY(root);
+    }
+    private float getMinY(MapRoom node){
+        if(node == null){ return minY; }
+
+        if(node.getPosition().y < minY){
+            minY = node.getPosition().y;
+        }
+
+        getMinY(node.getLeft());
+        getMinY(node.getFront());
+        getMinY(node.getRight());
+
+        return minY;
     }
 
     public void backtrack(Room room0, float roomOffset)
@@ -298,5 +418,9 @@ public class Map {
         printAll(node.getFront());
         printAll(node.getRight());
 
+    }
+
+    public MapRoom getRoot(){
+        return root;
     }
 }

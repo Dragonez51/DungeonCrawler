@@ -3,6 +3,9 @@ public class MapRoom {
     private Room room;
     private Vector2 position;
     private int rotation;
+    public int id;
+
+    private static int nextID = 0;
 
     private boolean doorL, doorF, doorR;
 
@@ -21,15 +24,16 @@ public class MapRoom {
         doorL = room.isDoorL();
         doorF = room.isDoorF();
         doorR = room.isDoorR();
-    }
 
-    public String ToString()
-    {
-        return room + ", L: " + doorL+ ", F: " + doorF+ ", R: " + doorR;
+        this.id = nextID++;
     }
 
     public Room getRoom() {
         return room;
+    }
+
+    public void setPosition(Vector2 position){
+        this.position = position;
     }
 
     public Vector2 getPosition(){
@@ -94,5 +98,34 @@ public class MapRoom {
 
     public void setRight(MapRoom right) {
         this.right = right;
+    }
+
+    @Override
+    public String toString(){
+        if(!room.isDoorL() && !room.isDoorF() && !room.isDoorR()){
+            return "Room0[id: "+id+", position: "+position+", rotation: "+rotation+"]";
+        }
+        if(room.isDoorL() && !room.isDoorF() && !room.isDoorR()){
+            return "RoomL[id: "+id+", position: "+position+", rotation: "+rotation+"]";
+        }
+        if(!room.isDoorL() && room.isDoorF() && !room.isDoorR()){
+            return "RoomF[id: "+id+", position: "+position+", rotation: "+rotation+"]";
+        }
+        if(!room.isDoorL() && !room.isDoorF() && room.isDoorR()){
+            return "RoomR[id: "+id+", position: "+position+", rotation: "+rotation+"]";
+        }
+        if(room.isDoorL() && room.isDoorF() && !room.isDoorR()){
+            return "RoomLF[id: "+id+", position: "+position+", rotation: "+rotation+"]";
+        }
+        if(!room.isDoorL() && room.isDoorF() && room.isDoorR()){
+            return "RoomFR[id: "+id+", position: "+position+", rotation: "+rotation+"]";
+        }
+        if(room.isDoorL() && !room.isDoorF() && room.isDoorR()){
+            return "RoomLR[id: "+id+", position: "+position+", rotation: "+rotation+"]";
+        }
+        if(room.isDoorL() && room.isDoorF() && room.isDoorR()){
+            return "RoomLFR[id: "+id+", position: "+position+", rotation: "+rotation+"]";
+        }
+        return "Unexpected room!";
     }
 }
